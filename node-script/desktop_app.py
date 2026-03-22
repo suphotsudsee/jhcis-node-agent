@@ -4,7 +4,6 @@
 import json
 import logging
 import queue
-import subprocess
 import threading
 import tkinter as tk
 from datetime import datetime
@@ -50,14 +49,12 @@ class SyncDesktopApp:
         self.env_var = tk.StringVar(value=".env")
         self.log_dir_var = tk.StringVar(value="logs")
         self.status_var = tk.StringVar(value="Ready")
-        self.service_status_var = tk.StringVar(value="Unknown")
         self.auto_sync_enabled_var = tk.BooleanVar(value=False)
         self.auto_sync_time_var = tk.StringVar(value="08:00")
         self.auto_sync_use_today_var = tk.BooleanVar(value=True)
 
         self._load_schedule_settings()
         self._build_ui()
-        self._refresh_service_status()
         self.root.after(150, self._drain_logs)
         self.root.after(1000, self._scheduler_tick)
 
@@ -136,26 +133,6 @@ class SyncDesktopApp:
             row=3, column=0, sticky="w", pady=(12, 0)
         )
 
-        service_frame = ttk.LabelFrame(controls, text="Windows Service", padding=12)
-        service_frame.grid(row=5, column=0, columnspan=4, sticky="ew", pady=(16, 0))
-        service_frame.columnconfigure(1, weight=1)
-
-        ttk.Label(service_frame, text="Service Status").grid(row=0, column=0, sticky="w")
-        ttk.Label(
-            service_frame,
-            textvariable=self.service_status_var,
-            font=("Segoe UI", 10, "bold")
-        ).grid(row=0, column=1, sticky="w", padx=(8, 0))
-
-        service_actions = ttk.Frame(service_frame)
-        service_actions.grid(row=1, column=0, columnspan=2, sticky="w", pady=(12, 0))
-
-        ttk.Button(service_actions, text="Install", command=self._install_service).grid(row=0, column=0, padx=(0, 8))
-        ttk.Button(service_actions, text="Start", command=lambda: self._run_service_command("start")).grid(row=0, column=1, padx=(0, 8))
-        ttk.Button(service_actions, text="Stop", command=lambda: self._run_service_command("stop")).grid(row=0, column=2, padx=(0, 8))
-        ttk.Button(service_actions, text="Uninstall", command=self._uninstall_service).grid(row=0, column=3, padx=(0, 8))
-        ttk.Button(service_actions, text="Refresh", command=self._refresh_service_status).grid(row=0, column=4)
-
         log_panel = ttk.Frame(body, padding=12)
         log_panel.columnconfigure(0, weight=1)
         log_panel.rowconfigure(1, weight=1)
@@ -197,103 +174,6 @@ class SyncDesktopApp:
 
     def _selected_types(self) -> List[str]:
         return SUMMARY_TYPES
-
-    def _powershell_script_path(self, name: str) -> Path:
-        return self.script_dir / name
-
-    def _run_powershell_as_admin(self, script_name: str) -> None:
-        script_path = self._powershell_script_path(script_name)
-        if not script_path.exists():
-            messagebox.showerror("Missing script", f"Script not found: {script_path}")
-            return
-
-        escaped_script_path = str(script_path).replace("'", "''")
-        command = [
-            "powershell",
-            "-NoProfile",
-            "-ExecutionPolicy",
-            "Bypass",
-            "-Command",
-            (
-                f"Start-Process -FilePath 'powershell.exe' -Verb RunAs "
-                f"-ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File','{escaped_script_path}')"
-            ),
-        ]
-
-        completed = subprocess.run(command, capture_output=True, text=True, cwd=self.script_dir)
-        if completed.returncode != 0:
-            error_text = (completed.stderr or completed.stdout or "Unknown error").strip()
-            self.log_queue.put(f"ERROR: Failed to launch elevated PowerShell: {error_text}")
-            messagebox.showerror("Service command failed", error_text)
-            return
-
-        self.log_queue.put(f"INFO: Launched {script_name} with administrator privileges")
-        self.status_var.set(f"Started {script_name}")
-        self.root.after(3000, self._refresh_service_status)
-
-    def _install_service(self) -> None:
-        self._run_powershell_as_admin("install_service.ps1")
-
-    def _uninstall_service(self) -> None:
-        self._run_powershell_as_admin("uninstall_service.ps1")
-
-    def _run_service_command(self, command: str) -> None:
-        action_map = {
-            "start": "Start-Service -Name 'JHCISSyncService'",
-            "stop": "Stop-Service -Name 'JHCISSyncService' -Force",
-        }
-        ps_action = action_map.get(command)
-        if not ps_action:
-            messagebox.showerror("Unsupported command", command)
-            return
-
-        escaped_action = ps_action.replace("'", "''")
-        elevate_command = [
-            "powershell",
-            "-NoProfile",
-            "-ExecutionPolicy",
-            "Bypass",
-            "-Command",
-            (
-                "Start-Process -FilePath 'powershell.exe' -Verb RunAs "
-                f"-ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-Command','{escaped_action}')"
-            ),
-        ]
-
-        completed = subprocess.run(
-            elevate_command,
-            capture_output=True,
-            text=True,
-            cwd=self.script_dir,
-        )
-        if completed.returncode != 0:
-            error_text = (completed.stderr or completed.stdout or "Unknown error").strip()
-            self.log_queue.put(f"ERROR: Failed to run service command {command}: {error_text}")
-            messagebox.showerror("Service command failed", error_text)
-            return
-
-        self.log_queue.put(f"INFO: Service command launched with administrator privileges: {command}")
-        self.status_var.set(f"Service command: {command}")
-        self.root.after(3000, self._refresh_service_status)
-
-    def _refresh_service_status(self) -> None:
-        service_name = "JHCISSyncService"
-        completed = subprocess.run(
-            [
-                "powershell",
-                "-NoProfile",
-                "-Command",
-                (
-                    f"$svc = Get-Service -Name '{service_name}' -ErrorAction SilentlyContinue; "
-                    "if ($null -eq $svc) { 'Not Installed' } else { $svc.Status.ToString() }"
-                ),
-            ],
-            capture_output=True,
-            text=True,
-            cwd=self.script_dir,
-        )
-        status = (completed.stdout or "").strip() or "Unknown"
-        self.service_status_var.set(status)
 
     def _load_schedule_settings(self) -> None:
         if not self.settings_file.exists():

@@ -1,20 +1,21 @@
 # JHCIS Summary Centralization Sync Agent
 
-สคริปต์สำหรับดึงข้อมูล Summary จาก JHCIS MySQL Local และส่งไปยัง Central API
+เครื่องมือสำหรับดึงข้อมูล Summary จาก JHCIS MySQL Local และส่งไปยัง Central API
 
 ## โครงสร้างไฟล์
 
 ```text
 node-script/
-├── sync_agent.py
-├── desktop_app.py
-├── build_desktop.ps1
-├── .env.example
-├── requirements.txt
-└── logs/
+|-- sync_agent.py
+|-- desktop_app.py
+|-- build_desktop.ps1
+|-- build_release.ps1
+|-- .env.example
+|-- requirements.txt
+`-- logs/
 ```
 
-## การติดตั้ง
+## ติดตั้งสำหรับพัฒนา
 
 ```powershell
 cd node-script
@@ -25,9 +26,7 @@ notepad .env
 
 ## การตั้งค่า
 
-โปรแกรมใช้ `.env` ไฟล์เดียว
-
-ตัวอย่างค่าใน `.env`
+โปรแกรมใช้ค่าใน `.env` เป็นหลัก
 
 ```bash
 JHCIS_DB_HOST=localhost
@@ -40,7 +39,7 @@ JHCIS_API_ENDPOINT=https://central.jhcis.go.th/api/v1/summary
 JHCIS_API_KEY=your-api-key
 
 JHCIS_FACILITY_ID=YOUR_FACILITY_ID
-JHCIS_FACILITY_NAME=ชื่อ รพ.สต./สถานบริการ
+JHCIS_FACILITY_NAME=ชื่อหน่วยบริการ
 JHCIS_FACILITY_CODE=FACILITY_CODE
 
 JHCIS_RETRY_ATTEMPTS=3
@@ -72,15 +71,6 @@ python sync_agent.py --summary-type OP,IP,ER
 python sync_agent.py --all-types
 ```
 
-Options
-
-- `--date` วันที่ที่ต้องการ sync รูปแบบ `YYYY-MM-DD`
-- `--summary-type` ระบุประเภทข้อมูลแบบคั่นด้วย comma
-- `--all-types` sync ทุกประเภท
-- `--env` พาธไฟล์ `.env`
-- `--queries` พาธไฟล์ `queries.sql`
-- `--log-dir` โฟลเดอร์เก็บ log
-
 ## Build EXE
 
 ```powershell
@@ -93,7 +83,21 @@ powershell -ExecutionPolicy Bypass -File .\build_desktop.ps1
 dist\JHCISSyncDesktop\JHCISSyncDesktop.exe
 ```
 
+## Build Release Package
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build_release.ps1
+```
+
+ไฟล์ที่ได้:
+
+```text
+release\JHCISSyncDesktop_envonly\
+release\JHCISSyncDesktop_envonly_YYYYMMDD_HHMMSS.zip
+```
+
 ## หมายเหตุ
 
 - เก็บ API Key ไว้ใน `.env` และไม่ควร commit ขึ้น Git
 - log จะถูกบันทึกใน `logs\sync_YYYY-MM-DD.log`
+- โปรแกรมรุ่นนี้ไม่มีการติดตั้ง Windows Service แล้ว
