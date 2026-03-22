@@ -1,0 +1,31 @@
+JHCIS Sync Desktop - คู่มือติดตั้งสำหรับเครื่องปลายทาง
+
+ไฟล์สำคัญในแพ็กเกจนี้
+- JHCISSyncDesktop_envonly.exe : โปรแกรมหน้าจอหลัก
+- .env : ไฟล์ตั้งค่าการเชื่อมต่อ
+- install_service.ps1 : ติดตั้ง Windows Service
+- uninstall_service.ps1 : ถอนการติดตั้ง Windows Service
+- JHCISSyncService\JHCISSyncService.exe : โปรแกรม service ที่ทำงานเบื้องหลัง
+
+วิธีติดตั้ง
+1. แตก zip ไปไว้ในโฟลเดอร์ถาวร เช่น C:\JHCISSyncDesktop_envonly
+2. เปิดไฟล์ .env แล้วแก้ค่าฐานข้อมูลและ API ให้ถูกต้อง
+3. คลิกขวา PowerShell แล้วเลือก Run as Administrator
+4. เข้าโฟลเดอร์ที่แตกไฟล์
+5. รันคำสั่ง:
+   powershell -ExecutionPolicy Bypass -File .\install_service.ps1
+
+วิธีใช้งาน
+- เปิด JHCISSyncDesktop_envonly.exe เพื่อทดสอบส่งข้อมูล, ดู log, และตั้งเวลา auto sync
+- Service จะใช้ค่า .env และ scheduler_settings.json จากโฟลเดอร์เดียวกับโปรแกรม
+
+วิธีถอนการติดตั้ง
+1. เปิด PowerShell แบบ Administrator
+2. เข้าโฟลเดอร์โปรแกรม
+3. รันคำสั่ง:
+   powershell -ExecutionPolicy Bypass -File .\uninstall_service.ps1
+
+หมายเหตุ
+- ถ้ามี SmartScreen หรือการถามสิทธิ์ของ Windows ให้กดอนุญาต
+- ถ้าเปลี่ยนค่า .env หรือ scheduler_settings.json หลังติดตั้ง service แล้ว ให้ restart service หรือกด Stop/Start ใหม่
+- แนะนำอย่าย้ายโฟลเดอร์หลังติดตั้ง service แล้ว ถ้าจำเป็นให้ uninstall ก่อนแล้วติดตั้งใหม่

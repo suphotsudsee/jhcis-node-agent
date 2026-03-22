@@ -1,0 +1,118 @@
+2026-03-22 10:44:10 - INFO - ============================================================
+2026-03-22 10:44:10 - INFO - JHCIS Summary Sync Started
+2026-03-22 10:44:10 - INFO - Date: 2026-03-22
+2026-03-22 10:44:10 - INFO - Summary Types: PERSON
+2026-03-22 10:44:10 - INFO - ============================================================
+2026-03-22 10:44:10 - INFO - 
+Processing: PERSON
+2026-03-22 10:44:10 - INFO - Fetched 1 records for PERSON
+2026-03-22 10:44:10 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/person
+2026-03-22 10:44:10 - INFO - Success: 200 - {"success":true,"message":"Summary data synced successfully","data":{"hcode":"03633","report_date":"2026-03-22","summary_type":"person","updated_at":"2026-03-22 10:44:10"},"statusCode":200}
+2026-03-22 10:44:10 - INFO - Success PERSON synced successfully
+2026-03-22 10:44:10 - INFO - ============================================================
+2026-03-22 10:44:10 - INFO - Sync Completed
+2026-03-22 10:44:10 - INFO - Success: 1/1
+2026-03-22 10:44:10 - INFO - ============================================================
+2026-03-22 10:46:08 - INFO - ============================================================
+2026-03-22 10:46:08 - INFO - JHCIS Summary Sync Started
+2026-03-22 10:46:08 - INFO - Date: 2026-03-22
+2026-03-22 10:46:08 - INFO - Summary Types: PERSON
+2026-03-22 10:46:08 - INFO - ============================================================
+2026-03-22 10:46:08 - INFO - 
+Processing: PERSON
+2026-03-22 10:46:08 - INFO - Fetched 1 records for PERSON
+2026-03-22 10:46:08 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/person
+2026-03-22 10:46:08 - INFO - Success: 200 - {"success":true,"message":"Summary data synced successfully","data":{"hcode":"03633","report_date":"2026-03-22","summary_type":"person","updated_at":"2026-03-22 10:46:08"},"statusCode":200}
+2026-03-22 10:46:08 - INFO - Success PERSON synced successfully
+2026-03-22 10:46:08 - INFO - ============================================================
+2026-03-22 10:46:08 - INFO - Sync Completed
+2026-03-22 10:46:08 - INFO - Success: 1/1
+2026-03-22 10:46:08 - INFO - ============================================================
+2026-03-22 11:50:52 - INFO - ============================================================
+2026-03-22 11:50:52 - INFO - JHCIS Summary Sync Started
+2026-03-22 11:50:52 - INFO - Date: 2026-03-22
+2026-03-22 11:50:52 - INFO - Summary Types: PERSON
+2026-03-22 11:50:52 - INFO - ============================================================
+2026-03-22 11:50:52 - ERROR - Failed to connect to database. Aborting.
+2026-03-22 12:40:38 - INFO - ============================================================
+2026-03-22 12:40:38 - INFO - JHCIS Summary Sync Started
+2026-03-22 12:40:38 - INFO - Date: 2026-03-22
+2026-03-22 12:40:38 - INFO - Summary Types: PERSON
+2026-03-22 12:40:38 - INFO - ============================================================
+2026-03-22 12:40:38 - INFO - 
+Processing: PERSON
+2026-03-22 12:40:38 - INFO - Loaded central query for PERSON from API
+2026-03-22 12:40:38 - INFO - Fetched 1 records for PERSON
+2026-03-22 12:40:38 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/person
+2026-03-22 12:41:04 - INFO - ============================================================
+2026-03-22 12:41:04 - INFO - JHCIS Summary Sync Started
+2026-03-22 12:41:04 - INFO - Date: 2026-03-22
+2026-03-22 12:41:04 - INFO - Summary Types: PERSON
+2026-03-22 12:41:04 - INFO - ============================================================
+2026-03-22 12:41:04 - INFO - 
+Processing: PERSON
+2026-03-22 12:41:04 - INFO - Loaded central query for PERSON from API
+2026-03-22 12:41:04 - INFO - Fetched 1 records for PERSON
+2026-03-22 12:41:04 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/person
+2026-03-22 12:41:04 - ERROR - Error: 400 - {"success":false,"error":"VALIDATION_ERROR","message":"Validation failed","details":[{"field":"hcode","message":"\"hcode\" is not allowed to be empty","type":"string.empty"}],"statusCode":400}
+2026-03-22 12:41:04 - INFO - Waiting 1 seconds before retry...
+2026-03-22 12:41:05 - INFO - Attempt 2/3: POST to http://localhost:4444/api/v1/sync/person
+2026-03-22 12:41:05 - ERROR - Error: 400 - {"success":false,"error":"VALIDATION_ERROR","message":"Validation failed","details":[{"field":"hcode","message":"\"hcode\" is not allowed to be empty","type":"string.empty"}],"statusCode":400}
+2026-03-22 12:41:05 - INFO - Waiting 1 seconds before retry...
+2026-03-22 12:41:06 - INFO - Attempt 3/3: POST to http://localhost:4444/api/v1/sync/person
+2026-03-22 12:41:06 - ERROR - Error: 400 - {"success":false,"error":"VALIDATION_ERROR","message":"Validation failed","details":[{"field":"hcode","message":"\"hcode\" is not allowed to be empty","type":"string.empty"}],"statusCode":400}
+2026-03-22 12:41:06 - ERROR - Failed after 3 attempts
+2026-03-22 12:41:06 - ERROR - Error PERSON sync failed
+2026-03-22 12:41:06 - INFO - ============================================================
+2026-03-22 12:41:06 - INFO - Sync Completed
+2026-03-22 12:41:06 - INFO - Success: 0/1
+2026-03-22 12:41:06 - INFO - ============================================================
+2026-03-22 12:41:29 - INFO - ============================================================
+2026-03-22 12:41:29 - INFO - JHCIS Summary Sync Started
+2026-03-22 12:41:29 - INFO - Date: 2026-03-22
+2026-03-22 12:41:29 - INFO - Summary Types: PERSON
+2026-03-22 12:41:29 - INFO - ============================================================
+2026-03-22 12:41:29 - INFO - 
+Processing: PERSON
+2026-03-22 12:41:29 - INFO - Loaded central query for PERSON from API
+2026-03-22 12:41:29 - INFO - Fetched 1 records for PERSON
+2026-03-22 12:41:29 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/person
+2026-03-22 12:41:29 - INFO - Success: 200 - {"success":true,"message":"Summary data synced successfully","data":{"hcode":"03633","report_date":"2026-03-22","summary_type":"person","updated_at":"2026-03-22 12:41:29"},"statusCode":200}
+2026-03-22 12:41:29 - INFO - Success PERSON synced successfully
+2026-03-22 12:41:29 - INFO - ============================================================
+2026-03-22 12:41:29 - INFO - Sync Completed
+2026-03-22 12:41:29 - INFO - Success: 1/1
+2026-03-22 12:41:29 - INFO - ============================================================
+2026-03-22 12:51:40 - INFO - ============================================================
+2026-03-22 12:51:40 - INFO - JHCIS Summary Sync Started
+2026-03-22 12:51:40 - INFO - Date: 2026-03-22
+2026-03-22 12:51:40 - INFO - Summary Types: PERSON
+2026-03-22 12:51:40 - INFO - ============================================================
+2026-03-22 12:51:40 - INFO - 
+Processing: PERSON
+2026-03-22 12:51:40 - INFO - Loaded central query for PERSON from API
+2026-03-22 12:51:40 - INFO - Fetched 1 records for PERSON
+2026-03-22 12:51:40 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/person
+2026-03-22 12:51:40 - INFO - Success: 200 - {"success":true,"message":"Summary data synced successfully","data":{"hcode":"03633","report_date":"2026-03-22","summary_type":"person","updated_at":"2026-03-22 12:51:40"},"statusCode":200}
+2026-03-22 12:51:40 - INFO - Success PERSON synced successfully
+2026-03-22 12:51:40 - INFO - ============================================================
+2026-03-22 12:51:40 - INFO - Sync Completed
+2026-03-22 12:51:40 - INFO - Success: 1/1
+2026-03-22 12:51:40 - INFO - ============================================================
+2026-03-22 13:28:45 - INFO - ============================================================
+2026-03-22 13:28:45 - INFO - JHCIS Summary Sync Started
+2026-03-22 13:28:45 - INFO - Date: 2026-03-22
+2026-03-22 13:28:45 - INFO - Summary Types: PERSON
+2026-03-22 13:28:45 - INFO - ============================================================
+2026-03-22 13:28:45 - INFO - Loaded central query for PERSON from API
+2026-03-22 13:28:45 - INFO - Saved 1 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-22 13:28:45 - INFO - 
+Processing: PERSON
+2026-03-22 13:28:45 - INFO - Fetched 1 records for PERSON
+2026-03-22 13:28:45 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/person
+2026-03-22 13:28:45 - INFO - Success: 200 - {"success":true,"message":"Summary data synced successfully","data":{"hcode":"03633","report_date":"2026-03-22","summary_type":"person","updated_at":"2026-03-22 13:28:45"},"statusCode":200}
+2026-03-22 13:28:45 - INFO - Success PERSON synced successfully
+2026-03-22 13:28:45 - INFO - ============================================================
+2026-03-22 13:28:45 - INFO - Sync Completed
+2026-03-22 13:28:45 - INFO - Success: 1/1
+2026-03-22 13:28:45 - INFO - ============================================================

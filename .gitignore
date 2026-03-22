@@ -1,0 +1,4 @@
+node-script/__pycache__
+node-script/build
+node-script/dist
+node-script/release/*.zip
