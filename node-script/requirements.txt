@@ -7,8 +7,8 @@ mysql-connector-python>=8.0.33
 # HTTP Client for API communication
 requests>=2.31.0
 
-# Optional: For enhanced MySQL features
-# pymysql>=1.1.0
+# PyMySQL fallback for older MySQL/MariaDB auth plugins in frozen builds
+pymysql>=1.1.0
 
 # Optional: For environment variable management
 # python-dotenv>=1.0.0

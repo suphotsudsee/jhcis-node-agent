@@ -116,3 +116,96 @@ Processing: PERSON
 2026-03-22 13:28:45 - INFO - Sync Completed
 2026-03-22 13:28:45 - INFO - Success: 1/1
 2026-03-22 13:28:45 - INFO - ============================================================
+2026-03-22 18:35:27 - INFO - ============================================================
+2026-03-22 18:35:27 - INFO - JHCIS Summary Sync Started
+2026-03-22 18:35:27 - INFO - Date: 2026-03-22
+2026-03-22 18:35:27 - INFO - Summary Types: OP
+2026-03-22 18:35:27 - INFO - ============================================================
+2026-03-22 18:35:27 - WARNING - Central query unavailable for OP: 404 - {"success":false,"error":"NOT_FOUND","message":"Central query not found for summary type: op","statusCode":404}
+2026-03-22 18:35:27 - ERROR - No central queries were available from API
+2026-03-22 18:35:27 - ERROR - Failed to prepare docs/queries.sql from central API. Aborting.
+2026-03-22 18:36:48 - INFO - ============================================================
+2026-03-22 18:36:48 - INFO - JHCIS Summary Sync Started
+2026-03-22 18:36:48 - INFO - Date: 2026-03-22
+2026-03-22 18:36:48 - INFO - Summary Types: OP
+2026-03-22 18:36:48 - INFO - ============================================================
+2026-03-22 18:36:48 - INFO - Loaded central query for OP from API
+2026-03-22 18:36:48 - INFO - Saved 1 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-22 18:36:48 - INFO - 
+Processing: OP
+2026-03-22 18:36:48 - WARNING - No data found for OP on 2026-03-22
+2026-03-22 18:36:48 - INFO - ============================================================
+2026-03-22 18:36:48 - INFO - Sync Completed
+2026-03-22 18:36:48 - INFO - Success: 0/1
+2026-03-22 18:36:48 - INFO - ============================================================
+2026-03-22 18:38:02 - INFO - ============================================================
+2026-03-22 18:38:02 - INFO - JHCIS Summary Sync Started
+2026-03-22 18:38:02 - INFO - Date: 2026-03-22
+2026-03-22 18:38:02 - INFO - Summary Types: OP, PERSON
+2026-03-22 18:38:02 - INFO - ============================================================
+2026-03-22 18:38:02 - INFO - Loaded central query for OP from API
+2026-03-22 18:38:02 - INFO - Loaded central query for PERSON from API
+2026-03-22 18:38:02 - INFO - Saved 2 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-22 18:38:02 - INFO - 
+Processing: OP
+2026-03-22 18:38:02 - WARNING - No data found for OP on 2026-03-22
+2026-03-22 18:38:02 - INFO - 
+Processing: PERSON
+2026-03-22 18:38:02 - INFO - Fetched 1 records for PERSON
+2026-03-22 18:38:02 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/person
+2026-03-22 18:38:02 - INFO - Success: 200 - {"success":true,"message":"Summary data synced successfully","data":{"hcode":"03633","report_date":"2026-03-22","summary_type":"person","updated_at":"2026-03-22 18:38:02"},"statusCode":200}
+2026-03-22 18:38:02 - INFO - Success PERSON synced successfully
+2026-03-22 18:38:02 - INFO - ============================================================
+2026-03-22 18:38:02 - INFO - Sync Completed
+2026-03-22 18:38:02 - INFO - Success: 1/2
+2026-03-22 18:38:02 - INFO - ============================================================
+2026-03-22 18:38:19 - INFO - ============================================================
+2026-03-22 18:38:19 - INFO - JHCIS Summary Sync Started
+2026-03-22 18:38:19 - INFO - Date: 2026-03-22
+2026-03-22 18:38:19 - INFO - Summary Types: OP
+2026-03-22 18:38:19 - INFO - ============================================================
+2026-03-22 18:38:19 - INFO - Loaded central query for OP from API
+2026-03-22 18:38:19 - INFO - Saved 1 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-22 18:38:19 - INFO - 
+Processing: OP
+2026-03-22 18:38:19 - INFO - Fetched 1 records for OP
+2026-03-22 18:38:19 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/op
+2026-03-22 18:38:19 - ERROR - Error: 400 - {"success":false,"error":"VALIDATION_ERROR","message":"Validation failed","details":[{"field":"total_visits","message":"\"total_visits\" is required","type":"any.required"}],"statusCode":400}
+2026-03-22 18:38:19 - INFO - Waiting 30 seconds before retry...
+2026-03-22 18:38:49 - INFO - Attempt 2/3: POST to http://localhost:4444/api/v1/sync/op
+2026-03-22 18:38:49 - ERROR - Error: 400 - {"success":false,"error":"VALIDATION_ERROR","message":"Validation failed","details":[{"field":"total_visits","message":"\"total_visits\" is required","type":"any.required"}],"statusCode":400}
+2026-03-22 18:38:49 - INFO - Waiting 30 seconds before retry...
+2026-03-22 18:39:13 - INFO - ============================================================
+2026-03-22 18:39:13 - INFO - JHCIS Summary Sync Started
+2026-03-22 18:39:13 - INFO - Date: 2026-03-22
+2026-03-22 18:39:13 - INFO - Summary Types: OP
+2026-03-22 18:39:13 - INFO - ============================================================
+2026-03-22 18:39:13 - INFO - Loaded central query for OP from API
+2026-03-22 18:39:13 - INFO - Saved 1 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-22 18:39:13 - INFO - 
+Processing: OP
+2026-03-22 18:39:13 - INFO - Fetched 1 records for OP
+2026-03-22 18:39:13 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/op
+2026-03-22 18:39:13 - INFO - Success: 200 - {"success":true,"message":"Summary data synced successfully","data":{"hcode":"03633","report_date":"2026-03-22","summary_type":"op","updated_at":"2026-03-22 18:39:13"},"statusCode":200}
+2026-03-22 18:39:13 - INFO - Success OP synced successfully
+2026-03-22 18:39:13 - INFO - ============================================================
+2026-03-22 18:39:13 - INFO - Sync Completed
+2026-03-22 18:39:13 - INFO - Success: 1/1
+2026-03-22 18:39:13 - INFO - ============================================================
+2026-03-22 18:50:48 - INFO - ============================================================
+2026-03-22 18:50:48 - INFO - JHCIS Summary Sync Started
+2026-03-22 18:50:48 - INFO - Date: 2026-03-22
+2026-03-22 18:50:48 - INFO - Summary Types: OP
+2026-03-22 18:50:48 - INFO - ============================================================
+2026-03-22 18:50:48 - INFO - Loaded central query for OP from API
+2026-03-22 18:50:48 - INFO - Saved 1 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-22 18:50:48 - INFO - 
+Processing: OP
+2026-03-22 18:50:48 - INFO - Fetched 1 records for OP
+2026-03-22 18:50:48 - INFO - Attempt 1/3: POST to http://localhost:4444/api/v1/sync/op
+2026-03-22 18:50:48 - INFO - Success: 200 - {"success":true,"message":"Summary data synced successfully","data":{"hcode":"03633","report_date":"2026-03-22","summary_type":"op","updated_at":"2026-03-22 18:50:48"},"statusCode":200}
+2026-03-22 18:50:48 - INFO - Success OP synced successfully
+2026-03-22 18:50:48 - INFO - ============================================================
+2026-03-22 18:50:48 - INFO - Sync Completed
+2026-03-22 18:50:48 - INFO - Success: 1/1
+2026-03-22 18:50:48 - INFO - ============================================================

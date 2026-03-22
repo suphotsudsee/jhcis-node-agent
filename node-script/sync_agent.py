@@ -13,14 +13,29 @@ import os
 import re
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date as date_type, datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from urllib.parse import urlparse
 
 import mysql.connector
+import pymysql
 import requests
 from mysql.connector import Error
 from requests.exceptions import RequestException, Timeout, ConnectionError
+
+try:
+    # Ensure MySQL client error localization is bundled in frozen builds.
+    import mysql.connector.locales.eng.client_error  # noqa: F401
+except ImportError:
+    pass
+
+try:
+    # Ensure MySQL auth plugins are bundled in frozen builds.
+    import mysql.connector.plugins.mysql_native_password  # noqa: F401
+except ImportError:
+    pass
 
 
 # ==================== Configuration ====================
@@ -28,28 +43,32 @@ from requests.exceptions import RequestException, Timeout, ConnectionError
 DEFAULT_CONFIG = {
     "database": {
         "host": "localhost",
-        "port": 3306,
-        "user": "jhcis_user",
-        "password": "jhcis_password",
-        "database": "jhcis_db",
+        "port": 3333,
+        "user": "root",
+        "password": "123456",
+        "database": "jhcisdb",
         "charset": "utf8mb4",
         "collation": "utf8mb4_unicode_ci"
     },
     "api": {
-        "endpoint": "https://central.jhcis.go.th/api/v1/sync",
+        "endpoint": "http://localhost:4444/api/v1/sync",
         "api_key": "your-api-key-here"
     },
     "settings": {
-        "retry_attempts": 3,
-        "retry_delay_seconds": 30,
-        "timeout_seconds": 60,
+        "retry_attempts": 2,
+        "retry_delay_seconds": 5,
+        "timeout_seconds": 15,
         "batch_size": 1000,
         "log_level": "INFO"
     },
     "facility": {
-        "facility_id": "YOUR_FACILITY_ID",
-        "facility_name": "ชื่อ รพ.สต./สถานบริการ",
-        "facility_code": "FACILITY_CODE"
+        "facility_id": "03633",
+        "facility_name": "รพ.สต.ตบหู",
+        "facility_code": "03633"
+    },
+    "schedule": {
+        "day": "all",
+        "time": "08:00",
     }
 }
 
@@ -117,24 +136,76 @@ def setup_logger(log_dir: Path, date_str: str) -> logging.Logger:
 def connect_to_database(
     config: Dict[str, Any],
     logger: Optional[logging.Logger] = None
-) -> Optional[mysql.connector.MySQLConnection]:
-    """เชื่อมต่อ MySQL Database"""
-    try:
-        connection = mysql.connector.connect(
-            host=config["database"]["host"],
-            port=config["database"]["port"],
-            user=config["database"]["user"],
-            password=config["database"]["password"],
-            database=config["database"]["database"],
-            use_pure=True,
-        )
-        return connection
-    except Error as e:
-        message = f"Database connection error: {e}"
+) -> Optional[Any]:
+    """เชื่อมต่อ MySQL/MariaDB Database"""
+    import warnings
+
+    db_config = config["database"]
+
+    def _log_error(message: str) -> None:
         logging.error(message)
         if logger is not None:
             logger.error(message)
-        return None
+
+    try:
+        try:
+            import mysql.connector.locales.eng.client_error  # noqa: F401
+        except ImportError:
+            pass
+        try:
+            import mysql.connector.plugins.mysql_native_password  # noqa: F401
+        except ImportError:
+            pass
+
+        # Suppress locale warnings for MariaDB compatibility
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            connection = mysql.connector.connect(
+                host=db_config["host"],
+                port=db_config["port"],
+                user=db_config["user"],
+                password=db_config["password"],
+                database=db_config["database"],
+                use_pure=True,
+                charset='utf8mb4',
+            )
+        # Test connection
+        cursor = connection.cursor()
+        cursor.execute("SELECT 1")
+        cursor.fetchone()
+        cursor.close()
+        return connection
+    except Error as e:
+        connector_message = f"Database connection error via mysql.connector: {e}"
+        _log_error(connector_message)
+
+        if "mysql_native_password" not in str(e):
+            return None
+
+        try:
+            connection = pymysql.connect(
+                host=db_config["host"],
+                port=int(db_config["port"]),
+                user=db_config["user"],
+                password=db_config["password"],
+                database=db_config["database"],
+                charset="utf8mb4",
+                cursorclass=pymysql.cursors.Cursor,
+                connect_timeout=10,
+                read_timeout=10,
+                write_timeout=10,
+                autocommit=False,
+            )
+            cursor = connection.cursor()
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+            cursor.close()
+            if logger is not None:
+                logger.info("Connected to database via PyMySQL fallback")
+            return connection
+        except Exception as fallback_error:
+            _log_error(f"Database connection error via PyMySQL fallback: {fallback_error}")
+            return None
 
 
 def load_sql_query(query_file: Path, summary_type: str) -> Optional[str]:
@@ -203,8 +274,10 @@ def fetch_central_query(
 
     headers = {"X-API-Key": config["api"]["api_key"]}
 
+    effective_timeout = get_effective_api_timing(config)["timeout"]
+
     try:
-        response = requests.get(queries_endpoint, headers=headers, timeout=config["settings"]["timeout_seconds"])
+        response = requests.get(queries_endpoint, headers=headers, timeout=effective_timeout)
         if response.status_code == 200:
             payload = response.json()
             sql = payload.get("data", {}).get("sql")
@@ -242,11 +315,22 @@ def sync_central_queries_to_file(
 ) -> Dict[str, str]:
     """Fetch central queries from API and materialize them into docs/queries.sql."""
     queries_by_type: Dict[str, str] = {}
+    max_workers = min(4, max(1, len(summary_types)))
 
-    for summary_type in summary_types:
-        query = fetch_central_query(summary_type, config, logger)
-        if query:
-            queries_by_type[summary_type] = query
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_map = {
+            executor.submit(fetch_central_query, summary_type, config, logger): summary_type
+            for summary_type in summary_types
+        }
+        for future in as_completed(future_map):
+            summary_type = future_map[future]
+            try:
+                query = future.result()
+            except Exception as e:
+                logger.warning(f"Failed to fetch central query for {summary_type}: {e}")
+                continue
+            if query:
+                queries_by_type[summary_type] = query
 
     if not queries_by_type:
         logger.error("No central queries were available from API")
@@ -333,9 +417,10 @@ def send_to_central_api(
     base_endpoint = config["api"]["endpoint"].rstrip("/")
     endpoint = f"{base_endpoint}/{summary_endpoint}"
     api_key = config["api"]["api_key"]
-    retry_attempts = config["settings"]["retry_attempts"]
-    retry_delay = config["settings"]["retry_delay_seconds"]
-    timeout = config["settings"]["timeout_seconds"]
+    timing = get_effective_api_timing(config)
+    retry_attempts = timing["retry_attempts"]
+    retry_delay = timing["retry_delay_seconds"]
+    timeout = timing["timeout"]
 
     if not data:
         logger.warning(f"No payload to send for {summary_type}")
@@ -387,6 +472,31 @@ def send_to_central_api(
     
     logger.error(f"Failed after {retry_attempts} attempts")
     return False
+
+
+def get_effective_api_timing(config: Dict[str, Any]) -> Dict[str, int]:
+    """Use shorter waits when the API is running on the same machine."""
+    settings = config.get("settings", {})
+    endpoint = config.get("api", {}).get("endpoint", "")
+    parsed = urlparse(endpoint)
+    host = (parsed.hostname or "").lower()
+
+    retry_attempts = int(settings.get("retry_attempts", 2))
+    retry_delay = int(settings.get("retry_delay_seconds", 5))
+    timeout = int(settings.get("timeout_seconds", 15))
+
+    if host in {"localhost", "127.0.0.1"}:
+        return {
+            "retry_attempts": min(retry_attempts, 2),
+            "retry_delay_seconds": min(retry_delay, 1),
+            "timeout": min(timeout, 5),
+        }
+
+    return {
+        "retry_attempts": retry_attempts,
+        "retry_delay_seconds": retry_delay,
+        "timeout": timeout,
+    }
 
 
 # ==================== Main Sync Logic ====================
@@ -487,6 +597,8 @@ def apply_env_overrides(config: Dict[str, Any]) -> Dict[str, Any]:
         ("facility", "facility_id"): ("JHCIS_FACILITY_ID", str),
         ("facility", "facility_name"): ("JHCIS_FACILITY_NAME", str),
         ("facility", "facility_code"): ("JHCIS_FACILITY_CODE", str),
+        ("schedule", "day"): ("JHCIS_SYNC_SCHEDULE_DAY", str),
+        ("schedule", "time"): ("JHCIS_SYNC_SCHEDULE_TIME", str),
     }
 
     merged = {
@@ -673,6 +785,8 @@ def send_to_central_api(
         "X-API-Key": api_key,
     }
 
+    retryable_statuses = {408, 425, 429}
+
     for attempt in range(1, retry_attempts + 1):
         try:
             logger.info(f"Attempt {attempt}/{retry_attempts}: POST to {endpoint}")
@@ -687,12 +801,14 @@ def send_to_central_api(
             if response.status_code == 200:
                 logger.info(f"Success: {response.status_code} - {response.text}")
                 return True
-            if response.status_code == 429:
+
+            if response.status_code in retryable_statuses or 500 <= response.status_code < 600:
                 logger.warning(
-                    f"Rate limited (429). Retry-After: {response.headers.get('Retry-After', 'N/A')}"
+                    f"Retryable API error {response.status_code}. Retry-After: {response.headers.get('Retry-After', 'N/A')}"
                 )
             else:
                 logger.error(f"Error: {response.status_code} - {response.text}")
+                return False
 
         except Timeout as e:
             logger.error(f"Attempt {attempt}: Timeout - {e}")
