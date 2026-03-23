@@ -1033,7 +1033,10 @@ Examples:
     parser.add_argument("-v", "--verbose", action="store_true")
 
     args = parser.parse_args()
-    script_dir = Path(__file__).parent.resolve()
+    
+    # Use get_app_dir() for frozen executables
+    script_dir = get_app_dir()
+    
     runtime = prepare_runtime(
         script_dir=script_dir,
         env_path=args.env,
