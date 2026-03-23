@@ -1,0 +1,106 @@
+2026-03-23 12:39:36 - INFO - ============================================================
+2026-03-23 12:39:36 - INFO - JHCIS Summary Sync Started
+2026-03-23 12:39:36 - INFO - Date: 2026-02-09
+2026-03-23 12:39:36 - INFO - Summary Types: OP
+2026-03-23 12:39:36 - INFO - ============================================================
+2026-03-23 12:39:36 - WARNING - Central query unavailable for OP: 403 - {"success":false,"error":"FORBIDDEN","message":"Invalid or inactive API Key","statusCode":403}
+2026-03-23 12:39:36 - ERROR - No central queries were available from API
+2026-03-23 12:39:36 - ERROR - Failed to prepare docs/queries.sql from central API. Aborting.
+2026-03-23 12:40:20 - INFO - ============================================================
+2026-03-23 12:40:20 - INFO - JHCIS Summary Sync Started
+2026-03-23 12:40:20 - INFO - Date: 2026-02-09
+2026-03-23 12:40:20 - INFO - Summary Types: OP
+2026-03-23 12:40:20 - INFO - ============================================================
+2026-03-23 12:40:20 - INFO - Loaded central query for OP from API
+2026-03-23 12:40:20 - INFO - Saved 1 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-23 12:40:20 - INFO - 
+Processing: OP
+2026-03-23 12:40:20 - INFO - Fetched 1 records for OP
+2026-03-23 12:40:20 - INFO - Attempt 1/3: POST to http://localhost:9021/api/v1/sync/op
+2026-03-23 12:40:21 - ERROR - Error: 400 - {"success":false,"error":"VALIDATION_ERROR","message":"Validation failed","details":[{"field":"report_period","message":"\"report_period\" is required","type":"any.required"}],"statusCode":400}
+2026-03-23 12:40:21 - ERROR - Error OP sync failed
+2026-03-23 12:40:21 - INFO - ============================================================
+2026-03-23 12:40:21 - INFO - Sync Completed
+2026-03-23 12:40:21 - INFO - Success: 0/1
+2026-03-23 12:40:21 - INFO - ============================================================
+2026-03-23 12:40:57 - INFO - ============================================================
+2026-03-23 12:40:57 - INFO - JHCIS Summary Sync Started
+2026-03-23 12:40:57 - INFO - Date: 2026-02-09
+2026-03-23 12:40:57 - INFO - Summary Types: OP
+2026-03-23 12:40:57 - INFO - ============================================================
+2026-03-23 12:40:57 - INFO - Loaded central query for OP from API
+2026-03-23 12:40:57 - INFO - Saved 1 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-23 12:40:57 - INFO - 
+Processing: OP
+2026-03-23 12:40:57 - INFO - Fetched 1 records for OP
+2026-03-23 12:40:57 - INFO - Attempt 1/3: POST to http://localhost:9021/api/v1/sync/op
+2026-03-23 12:40:57 - WARNING - Retryable API error 500. Retry-After: N/A
+2026-03-23 12:40:57 - INFO - Waiting 30 seconds before retry...
+2026-03-23 12:41:27 - INFO - Attempt 2/3: POST to http://localhost:9021/api/v1/sync/op
+2026-03-23 12:41:27 - WARNING - Retryable API error 500. Retry-After: N/A
+2026-03-23 12:41:27 - INFO - Waiting 30 seconds before retry...
+2026-03-23 12:43:17 - INFO - ============================================================
+2026-03-23 12:43:17 - INFO - JHCIS Summary Sync Started
+2026-03-23 12:43:17 - INFO - Date: 2026-02-09
+2026-03-23 12:43:17 - INFO - Summary Types: OP
+2026-03-23 12:43:17 - INFO - ============================================================
+2026-03-23 12:43:17 - INFO - Loaded central query for OP from API
+2026-03-23 12:43:17 - INFO - Saved 1 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-23 12:43:17 - INFO - 
+Processing: OP
+2026-03-23 12:43:17 - INFO - Fetched 1 records for OP
+2026-03-23 12:43:17 - INFO - Attempt 1/3: POST to http://localhost:9021/api/v1/sync/op
+2026-03-23 12:43:17 - WARNING - Retryable API error 500. Retry-After: N/A
+2026-03-23 12:43:17 - INFO - Waiting 30 seconds before retry...
+2026-03-23 12:43:47 - INFO - Attempt 2/3: POST to http://localhost:9021/api/v1/sync/op
+2026-03-23 12:43:47 - WARNING - Retryable API error 500. Retry-After: N/A
+2026-03-23 12:43:47 - INFO - Waiting 30 seconds before retry...
+2026-03-23 12:44:17 - INFO - Attempt 3/3: POST to http://localhost:9021/api/v1/sync/op
+2026-03-23 12:44:17 - WARNING - Retryable API error 500. Retry-After: N/A
+2026-03-23 12:44:17 - ERROR - Failed after 3 attempts
+2026-03-23 12:44:17 - ERROR - Error OP sync failed
+2026-03-23 12:44:17 - INFO - ============================================================
+2026-03-23 12:44:17 - INFO - Sync Completed
+2026-03-23 12:44:17 - INFO - Success: 0/1
+2026-03-23 12:44:17 - INFO - ============================================================
+2026-03-23 12:45:01 - INFO - ============================================================
+2026-03-23 12:45:01 - INFO - JHCIS Summary Sync Started
+2026-03-23 12:45:01 - INFO - Date: 2026-02-09
+2026-03-23 12:45:01 - INFO - Summary Types: OP
+2026-03-23 12:45:01 - INFO - ============================================================
+2026-03-23 12:45:01 - INFO - Loaded central query for OP from API
+2026-03-23 12:45:01 - INFO - Saved 1 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-23 12:45:01 - INFO - 
+Processing: OP
+2026-03-23 12:45:01 - INFO - Fetched 1 records for OP
+2026-03-23 12:45:01 - INFO - Attempt 1/3: POST to http://localhost:9021/api/v1/sync/op
+2026-03-23 12:45:01 - WARNING - Retryable API error 500. Retry-After: N/A
+2026-03-23 12:45:01 - INFO - Waiting 30 seconds before retry...
+2026-03-23 12:45:31 - INFO - Attempt 2/3: POST to http://localhost:9021/api/v1/sync/op
+2026-03-23 12:45:31 - WARNING - Retryable API error 500. Retry-After: N/A
+2026-03-23 12:45:31 - INFO - Waiting 30 seconds before retry...
+2026-03-23 12:46:01 - INFO - Attempt 3/3: POST to http://localhost:9021/api/v1/sync/op
+2026-03-23 12:46:01 - WARNING - Retryable API error 500. Retry-After: N/A
+2026-03-23 12:46:01 - ERROR - Failed after 3 attempts
+2026-03-23 12:46:01 - ERROR - Error OP sync failed
+2026-03-23 12:46:01 - INFO - ============================================================
+2026-03-23 12:46:01 - INFO - Sync Completed
+2026-03-23 12:46:01 - INFO - Success: 0/1
+2026-03-23 12:46:01 - INFO - ============================================================
+2026-03-23 12:46:42 - INFO - ============================================================
+2026-03-23 12:46:42 - INFO - JHCIS Summary Sync Started
+2026-03-23 12:46:42 - INFO - Date: 2026-02-09
+2026-03-23 12:46:42 - INFO - Summary Types: OP
+2026-03-23 12:46:42 - INFO - ============================================================
+2026-03-23 12:46:42 - INFO - Loaded central query for OP from API
+2026-03-23 12:46:42 - INFO - Saved 1 central queries to C:\fullstack\jhcis-node-agent\node-script\docs\queries.sql
+2026-03-23 12:46:42 - INFO - 
+Processing: OP
+2026-03-23 12:46:42 - INFO - Fetched 1 records for OP
+2026-03-23 12:46:42 - INFO - Attempt 1/3: POST to http://localhost:9021/api/v1/sync/op
+2026-03-23 12:46:42 - INFO - Success: 200 - {"success":true,"message":"Summary data synced successfully","data":{"hcode":"03633","report_date":"2026-02-09","summary_type":"op","updated_at":"2026-03-23 12:46:42"},"statusCode":200}
+2026-03-23 12:46:42 - INFO - Success OP synced successfully
+2026-03-23 12:46:42 - INFO - ============================================================
+2026-03-23 12:46:42 - INFO - Sync Completed
+2026-03-23 12:46:42 - INFO - Success: 1/1
+2026-03-23 12:46:42 - INFO - ============================================================

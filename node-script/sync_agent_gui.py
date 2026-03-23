@@ -48,14 +48,13 @@ class JHCISyncApp:
     """Main Application Class"""
 
     SCHEDULE_DAY_OPTIONS = [
-        ("All", "all"),
-        ("Sunday", "sunday"),
-        ("Monday", "monday"),
-        ("Tuesday", "tuesday"),
-        ("Wednesday", "wednesday"),
-        ("Thursday", "thursday"),
-        ("Friday", "friday"),
-        ("Saturday", "saturday"),
+        ("sunday", "อาทิตย์"),
+        ("monday", "จันทร์"),
+        ("tuesday", "อังคาร"),
+        ("wednesday", "พุธ"),
+        ("thursday", "พฤหัสบดี"),
+        ("friday", "ศุกร์"),
+        ("saturday", "เสาร์"),
     ]
 
     def __init__(self, root: tk.Tk):
@@ -378,45 +377,71 @@ class JHCISyncApp:
         ttk.Button(btn_frame, text="📁 เปิดโฟลเดอร์", command=self._open_folder).pack(side=tk.LEFT, padx=5)
 
     def _build_schedule_tab(self, parent: ttk.Frame):
-        """Build the sync schedule tab."""
+        """Build the sync schedule tab with multi-day selection."""
         schedule_frame = ttk.LabelFrame(parent, text="🗓 Sync Schedule", padding="10")
         schedule_frame.pack(fill=tk.X, pady=(0, 10))
 
         schedule_config = self.config.get("schedule", {})
-        stored_day = str(schedule_config.get("day", "all")).lower()
+        stored_days = str(schedule_config.get("day", "")).lower()
         default_time = str(schedule_config.get("time", "08:00")).strip() or "08:00"
 
-        ttk.Label(schedule_frame, text="Day:").grid(row=0, column=0, sticky=tk.W, padx=(0, 10), pady=2)
-        day_map = {label: value for label, value in self.SCHEDULE_DAY_OPTIONS}
-        reverse_day_map = {value: label for label, value in self.SCHEDULE_DAY_OPTIONS}
-        self.settings_vars["schedule_day"] = tk.StringVar(value=stored_day if stored_day in reverse_day_map else "all")
-        day_combo = ttk.Combobox(
-            schedule_frame,
-            width=18,
-            state="readonly",
-            values=list(reverse_day_map.values()),
-        )
-        day_combo.set(reverse_day_map.get(self.settings_vars["schedule_day"].get(), "All"))
-        day_combo.grid(row=0, column=1, sticky=tk.W, pady=2)
+        # Day selection with checkboxes
+        ttk.Label(schedule_frame, text="วันที่จะ sync:").grid(row=0, column=0, sticky=tk.NW, padx=(0, 10), pady=2)
+        
+        day_frame = ttk.Frame(schedule_frame)
+        day_frame.grid(row=0, column=1, sticky=tk.W, pady=2)
 
-        def on_day_change(_event: Optional[tk.Event] = None) -> None:
-            self.settings_vars["schedule_day"].set(day_map.get(day_combo.get(), "all"))
+        self.schedule_day_vars = {}
+        stored_days_list = [d.strip() for d in stored_days.split(",") if d.strip()]
+        
+        for i, (day_key, day_label) in enumerate(self.SCHEDULE_DAY_OPTIONS):
+            var = tk.BooleanVar(value=day_key in stored_days_list or stored_days == "all")
+            self.schedule_day_vars[day_key] = var
+            cb = ttk.Checkbutton(day_frame, text=day_label, variable=var)
+            cb.grid(row=i // 4, column=i % 4, sticky=tk.W, padx=5, pady=1)
 
-        day_combo.bind("<<ComboboxSelected>>", on_day_change)
+        # All days checkbox
+        all_frame = ttk.Frame(schedule_frame)
+        all_frame.grid(row=1, column=1, sticky=tk.W, pady=5)
+        
+        self.schedule_all_days = tk.BooleanVar(value=stored_days == "all" or len(stored_days_list) == 7)
+        all_cb = ttk.Checkbutton(all_frame, text="ทุกวัน (All)", variable=self.schedule_all_days, command=self._toggle_all_days)
+        all_cb.pack(side=tk.LEFT)
 
-        ttk.Label(schedule_frame, text="Time:").grid(row=1, column=0, sticky=tk.W, padx=(0, 10), pady=2)
-        self.settings_vars["schedule_time"] = tk.StringVar(value=default_time or "08:00")
-        ttk.Entry(
-            schedule_frame,
-            textvariable=self.settings_vars["schedule_time"],
-            width=10,
-        ).grid(row=1, column=1, sticky=tk.W, pady=2)
+        # Time selection
+        ttk.Label(schedule_frame, text="เวลา:").grid(row=2, column=0, sticky=tk.W, padx=(0, 10), pady=2)
+        time_frame = ttk.Frame(schedule_frame)
+        time_frame.grid(row=2, column=1, sticky=tk.W, pady=2)
+        
+        self.settings_vars["schedule_time"] = tk.StringVar(value=default_time)
+        ttk.Entry(time_frame, textvariable=self.settings_vars["schedule_time"], width=8).pack(side=tk.LEFT)
+        ttk.Label(time_frame, text=" (HH:MM รูปแบบ 24 ชั่วโมง)").pack(side=tk.LEFT)
 
-        info_label = ttk.Label(
-            parent,
-            text="Saved to .env and applied to Windows Task Scheduler for this site.",
-        )
-        info_label.pack(anchor=tk.W)
+        # Schedule info
+        info_frame = ttk.LabelFrame(parent, text="📋 ข้อมูล", padding="10")
+        info_frame.pack(fill=tk.X, pady=(10, 0))
+        
+        ttk.Label(info_frame, text="• เลือกวันที่ต้องการ sync ได้หลายวัน", anchor=tk.W).pack(fill=tk.X)
+        ttk.Label(info_frame, text="• ถ้าเลือก 'ทุกวัน' จะ sync ทุกวัน", anchor=tk.W).pack(fill=tk.X)
+        ttk.Label(info_frame, text="• ตั้งค่าเวลาเป็นรูปแบบ HH:MM (เช่น 08:00, 21:30)", anchor=tk.W).pack(fill=tk.X)
+        ttk.Label(info_frame, text="• กด 'บันทึก Settings' เพื่อสร้าง Windows Task Scheduler", anchor=tk.W).pack(fill=tk.X)
+
+    def _toggle_all_days(self):
+        """Toggle all days selection."""
+        if self.schedule_all_days.get():
+            for var in self.schedule_day_vars.values():
+                var.set(True)
+        else:
+            for var in self.schedule_day_vars.values():
+                var.set(False)
+    
+    def _get_selected_days(self) -> str:
+        """Get selected days as comma-separated string."""
+        if self.schedule_all_days.get():
+            return "all"
+        
+        selected = [day_key for day_key, var in self.schedule_day_vars.items() if var.get()]
+        return ",".join(selected) if selected else "all"
     
     def _build_logs_tab(self, parent: ttk.Frame):
         """Build the logs tab"""
@@ -470,8 +495,10 @@ class JHCISyncApp:
         return None
 
     def _apply_windows_schedule(self) -> None:
-        schedule_day = self.settings_vars["schedule_day"].get().strip().lower()
-        schedule_time = self.settings_vars["schedule_time"].get().strip()
+        schedule_days = self._get_selected_days()
+        schedule_time = self._normalize_schedule_time(self.settings_vars["schedule_time"].get())
+        if not schedule_time:
+            raise ValueError("Schedule time must use HH:MM format")
         task_name = self._scheduled_task_name()
         cli_executable = self._find_cli_executable()
         if not cli_executable:
@@ -489,9 +516,10 @@ class JHCISyncApp:
             encoding="utf-8",
         )
 
-        if schedule_day == "all":
+        if schedule_days == "all":
             schedule_args = ["/SC", "DAILY"]
         else:
+            # Convert days to Windows Task Scheduler format
             day_map = {
                 "sunday": "SUN",
                 "monday": "MON",
@@ -501,10 +529,14 @@ class JHCISyncApp:
                 "friday": "FRI",
                 "saturday": "SAT",
             }
-            mapped_day = day_map.get(schedule_day)
-            if not mapped_day:
-                raise ValueError(f"Unsupported schedule day: {schedule_day}")
-            schedule_args = ["/SC", "WEEKLY", "/D", mapped_day]
+            days_list = [d.strip() for d in schedule_days.split(",") if d.strip()]
+            mapped_days = [day_map.get(d.lower()) for d in days_list if day_map.get(d.lower())]
+            
+            if not mapped_days:
+                raise ValueError(f"Unsupported schedule days: {schedule_days}")
+            
+            # Windows Task Scheduler uses comma-separated days for WEEKLY
+            schedule_args = ["/SC", "WEEKLY", "/D", ",".join(mapped_days)]
 
         task_command = f'"{runner_script}"'
         command = [
@@ -523,7 +555,7 @@ class JHCISyncApp:
         if completed.returncode != 0:
             message = completed.stderr.strip() or completed.stdout.strip() or "Unknown schedule creation error"
             raise RuntimeError(message)
-        self._log(f"Windows Task Scheduler updated: {task_name} at {schedule_day} {schedule_time}", "INFO")
+        self._log(f"Windows Task Scheduler updated: {task_name} at {schedule_days} {schedule_time}", "INFO")
     
     def _log(self, message: str, level: str = "INFO"):
         """Log message to the log tab"""
@@ -812,6 +844,9 @@ class JHCISyncApp:
                 raise ValueError("Schedule time must use HH:MM format, for example 21:26")
             self.settings_vars["schedule_time"].set(normalized_schedule_time)
 
+            # Get selected days
+            schedule_days = self._get_selected_days()
+
             # Build .env content
             env_content = f"""# JHCIS Sync Agent Configuration
 # Generated: {datetime.now().isoformat()}
@@ -833,7 +868,7 @@ JHCIS_FACILITY_NAME={self.settings_vars['facility_name'].get()}
 JHCIS_FACILITY_CODE={self.settings_vars['facility_code'].get()}
 
 # Schedule
-JHCIS_SYNC_SCHEDULE_DAY={self.settings_vars['schedule_day'].get()}
+JHCIS_SYNC_SCHEDULE_DAY={schedule_days}
 JHCIS_SYNC_SCHEDULE_TIME={self.settings_vars['schedule_time'].get()}
 
 # Settings
@@ -844,6 +879,7 @@ JHCIS_TIMEOUT_SECONDS={self.settings_vars['timeout'].get()}
             
             env_file.write_text(env_content, encoding='utf-8')
             self._log(f"Settings saved to {env_file}")
+            self._log(f"Schedule days: {schedule_days}")
             self._apply_windows_schedule()
             
             # Reload config
@@ -879,9 +915,23 @@ JHCIS_TIMEOUT_SECONDS={self.settings_vars['timeout'].get()}
         self.settings_vars['facility_id'].set(self.config.get("facility", {}).get("facility_id", ""))
         self.settings_vars['facility_name'].set(self.config.get("facility", {}).get("facility_name", ""))
         self.settings_vars['facility_code'].set(self.config.get("facility", {}).get("facility_code", ""))
+        
+        # Reload schedule days
         schedule_time = str(self.config.get("schedule", {}).get("time", "08:00")).strip()
-        self.settings_vars['schedule_day'].set(str(self.config.get("schedule", {}).get("day", "all")).lower())
+        schedule_days = str(self.config.get("schedule", {}).get("day", "all")).lower()
+        
         self.settings_vars['schedule_time'].set(schedule_time or "08:00")
+        
+        # Update day checkboxes
+        if hasattr(self, 'schedule_day_vars'):
+            stored_days_list = [d.strip() for d in schedule_days.split(",") if d.strip()]
+            for day_key, var in self.schedule_day_vars.items():
+                var.set(day_key in stored_days_list or schedule_days == "all")
+            
+            # Update "all days" checkbox
+            if hasattr(self, 'schedule_all_days'):
+                self.schedule_all_days.set(schedule_days == "all" or len(stored_days_list) == 7)
+        
         self.settings_vars['retry_attempts'].set(str(self.config.get("settings", {}).get("retry_attempts", "3")))
         self.settings_vars['retry_delay'].set(str(self.config.get("settings", {}).get("retry_delay_seconds", "30")))
         self.settings_vars['timeout'].set(str(self.config.get("settings", {}).get("timeout_seconds", "60")))
